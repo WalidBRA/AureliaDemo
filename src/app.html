@@ -1,29 +1,38 @@
 <template>
-	<!-- <require from="materialize-css/dist/css/materialize.css"></require> -->
-	<require from="prismjs/themes/prism.css"></require>
-  <require from="./loading-indicator"></require>
-  <require from='./nav-bar'></require>
-  <require from="./color-switcher.html"></require>
-  <require from="./app-colors.html"></require>
-  <md-colors primary-color.bind="primaryColor" secondary-color.bind="secondaryColor" success-color.bind="successColor" error-color.bind="errorColor"></md-colors>
-  <app-colors primary-color.bind="primaryColor" accent-color.bind="secondaryColor"></app-colors>
-  <loading-indicator></loading-indicator>
-  <header>
-    <nav-bar router.bind="router"></nav-bar>
-  </header>
-    <main>
+  <h1 id="heading">${heading}</h1>
 
-      <div class="row">
-        <div class="col s12 m3">
-          <color-switcher primary-color.two-way="primaryColor" secondary-color.two-way="secondaryColor" error-color.two-way="errorColor"></color-switcher>
-        </div>
-      </div>
+  <form submit.trigger="addTodo()">
+    <label>
+      <select value.bind="selectedCategory" data-id="select.category">
+        <option value="">Choisir...</option>
+        <option repeat.for="category of categories" value.bind="category">
+          ${category}
+        </option>
+      </select>
+    </label>
+    <input type="text" value.bind="todoDescription" data-id="input.text.description" placeholder="Que faire ?"
+      focus.bind="descriptionHasFocus">
+    <button type="submit" disabled.bind="!todoDescription">Ajouter</button>
+  </form>
 
-      <div class="page-host">
-        <router-view></router-view>
-      </div>
-    </main>
-    <footer>
-      <!-- placeholder footer -->
-    </footer>
+  <ul>
+    <template repeat.for="todo of todos">
+      <li if.bind="['Tout', todo.category].includes(displayedCategory)" data-id="todo-${$index + 1}">
+        <span if.bind="todo.category" data-id="text.todo_category-${$index + 1}">${todo.category}</span>
+        <input type="checkbox" checked.bind="todo.done" data-id="input.checkbox.done-${$index + 1}">
+        <span css="text-decoration: ${todo.done ? 'line-through' : 'none'}"
+          data-id="text.todo_description-${$index + 1}">
+          ${todo.description}
+        </span>
+        <button click.trigger="removeTodo(todo)" data-id="button.remove_todo-${$index + 1}">Supprimer</button>
+      </li>
+    </template>
+  </ul>
+
+  <strong>Catégories :</strong>
+  <label repeat.for="category of categoriesToDisplay">
+    <input type="radio" name="category_to_display" value.bind="category" checked.bind="displayedCategory"
+      data-id="input.radio.category_${category}">
+    ${category}
+  </label>
 </template>
